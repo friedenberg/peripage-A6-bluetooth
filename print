@@ -1,0 +1,9 @@
+#! /bin/bash -ex
+
+PERI_MAC="${PERI_MAC:-c8-47-8c-00-d9-89}"
+
+eval "$(pyenv init -)"
+
+for file in "$@"; do
+  python ./ppa6-print.py -i "$file" "$PERI_MAC"
+done

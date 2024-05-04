@@ -159,10 +159,10 @@ def printImage(img):
 print("Connecting")
 sock.connect((host, 1))
 
-deviceName = getDeviceName()
-print("Device Name", deviceName)
-print("Device Info", getFWDPI())
-print("Serial Number", getSerial())
+# deviceName = getDeviceName()
+# print("Device Name", deviceName)
+# print("Device Info", getFWDPI())
+# print("Serial Number", getSerial())
 
 print("Resetting device")
 reset()
