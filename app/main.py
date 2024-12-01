@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import time
 import os
 import fileinput
@@ -106,7 +108,7 @@ class PeriPage:
             log ("Target image height is too large. Can't print this (yet)")
             sys.exit(1)
 
-        img = img.resize((384, new_height), Image.ANTIALIAS)
+        img = img.resize((384, new_height), Image.LANCZOS)
 
         img = img.convert("1")
         # write chunks of 122 bytes to printer
@@ -207,7 +209,8 @@ class PrinterThread(Thread):
 
             # printer.printFrom(sys.stdin)
 
-            printer.printImage(loadImageFromFileName('~/Downloads/flareon'))
+            for file in sys.argv[1:]:
+                printer.printImage(loadImageFromFileName(file))
         except Exception as e:
             print(e)
         finally:
