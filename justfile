@@ -17,7 +17,7 @@ edit_version:
   git commit -m "bumped version to $(cat "$file_version")"
 
 release: edit_version && deploy
-  git push origin main
+  git push origin
   # version="$("$file_version")"
   # git diff --exit-code -s || (echo "unstaged changes, refusing to release" && exit 1)
   # git tag "$version" -m "$version"
