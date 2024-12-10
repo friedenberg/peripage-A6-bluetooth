@@ -1,16 +1,21 @@
-[tool.poetry]
-name = "app"
-version = "0.1.0"
-description = ""
-authors = ["Your Name <you@example.com>"]
-license = "MIT"
+[project]
+name = "peri"
+version = "0.0.1"
+description = "tools to print to the PeriA6 bluetooth receipt printer"
 readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+  "pillow",
+  "pyobjc-core",
+  "pyobjc-framework-Cocoa",
+  "pyobjc-framework-CoreBluetooth",
+  "pyobjc-framework-IOBluetooth",
+  "tqdm",
+]
 
-[tool.poetry.dependencies]
-python = "^3.11"
-pyobjc-framework-iobluetooth = "^10.3.1"
-
+[project.scripts]
+peri = "peri:main"
 
 [build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
