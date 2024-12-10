@@ -1,6 +1,6 @@
 [project]
 name = "peri"
-version = "0.0.3"
+version = "0.0.4"
 description = "tools to print to the PeriA6 bluetooth receipt printer"
 readme = "README.md"
 requires-python = ">=3.13"
