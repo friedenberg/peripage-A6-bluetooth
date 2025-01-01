@@ -15,9 +15,14 @@
   outputs = { self, nixpkgs, nixpkgs-stable, utils, chromium-html-to-pdf }:
     utils.lib.eachDefaultSystem (system:
       let
-        pkgs = import nixpkgs { inherit system; };
+        pkgs = import nixpkgs {
+          inherit system;
+        };
         name = "pa6e-markdown-to-html";
-        buildInputs = with pkgs; [ pandoc ];
+        buildInputs = with pkgs; [
+          pandoc
+          chromium-html-to-pdf.packages.${system}.html-to-pdf
+        ];
         pa6e-markdown-to-html = (
           pkgs.writeScriptBin name (builtins.readFile ./markdown-to-html.bash)
         ).overrideAttrs(old: {
@@ -30,7 +35,7 @@
       in rec {
         packages.pa6e-markdown-to-html = pkgs.symlinkJoin {
           name = name;
-          paths = [ pa6e-markdown-to-html ] ++ buildInputs;
+          paths = [ pa6e-markdown-to-html src ] ++ buildInputs;
           buildInputs = [ pkgs.makeWrapper ];
           postBuild = "wrapProgram $out/bin/${name} --prefix PATH : $out/bin";
         };
