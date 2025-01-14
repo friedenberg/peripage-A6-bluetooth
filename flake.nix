@@ -20,6 +20,7 @@
         };
         name = "pa6e-markdown-to-html";
         buildInputs = with pkgs; [
+          imagemagick
           pandoc
           chromium-html-to-pdf.packages.${system}.html-to-pdf
         ];
@@ -44,6 +45,7 @@
 
         devShells.default = pkgs.mkShell {
           packages = (with pkgs; [
+            imagemagick
             pandoc
             chromium-html-to-pdf.packages.${system}.html-to-pdf
           ]);

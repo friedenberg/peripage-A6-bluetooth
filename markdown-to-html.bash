@@ -12,7 +12,12 @@ pandoc \
   "$target"
 
 html-to-pdf "$target.html" '"paperWidth": 2.2409, "marginLeft": 0, "marginRight": 0'
+magick -density 300 "$target.html.pdf" -background white -flatten -resize 50% "$target.html.pdf.png"
+magick "$target.html.pdf.png" -gravity North \
+  -background white -splice 0x1 \
+  -background black -splice 0x1 \
+  -trim +repage -chop 0x1 \
+  "$target-trimmed.html.pdf.png"
+
 # TODO
-# crop PDF
-# convert to PNG
 # use uv run pa6e
