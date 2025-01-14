@@ -13,9 +13,10 @@
   }
 
   body {
-    font-family: "Azuro";
+    font-family: "Azuro TF";
     font-weight: bold;
     font-size: 10pt;
+    font-variant-numeric: tabular-nums;
   }
 
   ul {
@@ -24,6 +25,11 @@
 
   ul li {
     margin-bottom: 6px;
+  }
+
+  li::before {
+    font-family: "Azuro TF";
+    font-variant-numeric: tabular-nums;
   }
 
   @page {
