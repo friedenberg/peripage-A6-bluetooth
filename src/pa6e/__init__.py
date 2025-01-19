@@ -44,14 +44,16 @@ class PeriPage:
 
         ui("connecting...")
         self.dev = IOBluetooth.IOBluetoothDevice.deviceWithAddressString_("c8:47:8c:00:d9:89")
-        log(self.dev.openConnection())
-        log(self.dev.isConnected())
+        log("openConection:", self.dev.openConnection())
+        log("isConnected:", self.dev.isConnected())
 
         result, self.chan = self.dev.openRFCOMMChannelSync_withChannelID_delegate_(
                 None,
                 1,
                 self.delegate,
                 )
+
+        time.sleep(0.5)
 
         self.reset()
 

@@ -1,4 +1,4 @@
-#! /usr/bin/env -S bash -xe
+#! /usr/bin/env -S bash -e
 
 dir_nix_store="$(realpath "$(dirname "$0")/../")"
 
@@ -19,5 +19,4 @@ magick "$target.html.pdf.png" -gravity North \
   -trim +repage -chop 0x1 \
   "$target-trimmed.html.pdf.png"
 
-# TODO
-# use uv run pa6e
+uv run pa6e "$target-trimmed.html.pdf.png"
