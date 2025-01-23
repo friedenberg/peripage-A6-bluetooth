@@ -9,7 +9,7 @@ pandoc \
   --standalone \
   --embed-resources \
   --css "$dir_nix_store/peri-a6.css" \
-  "$target"
+  "$target" 2>/dev/null
 
 html-to-pdf "$target.html" '"paperWidth": 2.2409, "marginLeft": 0, "marginRight": 0'
 magick -density 300 "$target.html.pdf" -background white -flatten -resize 50% "$target.html.pdf.png"

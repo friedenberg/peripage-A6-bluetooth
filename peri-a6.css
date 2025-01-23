@@ -1,4 +1,20 @@
 @media print {
+  /* [type="checkbox"] { */
+  /*   position: relative; */
+  /*   display: block; */
+  /*   left: 2px; */
+  /*   top: -11px; */
+  /*   width: 7px; */
+  /*   height: 7px; */
+  /*   border-width: 1px; */
+  /*   border-style: solid; */
+  /*   border-color: #B3B3B3 #dcddde #dcddde #B3B3B3; */
+  /*   content: ""; */
+  /*   background-image: linear-gradient(135deg, #B1B6BE 0%, #FFF 100%); */
+  /*   background-repeat: no-repeat; */
+  /*   background-position: center; */
+  /* } */
+
   h1 {
     text-align: center;
     font-size: 16pt;
@@ -15,7 +31,7 @@
   body {
     font-family: "Azuro TF";
     font-weight: bold;
-    font-size: 10pt;
+    font-size: 12pt;
     font-variant-numeric: tabular-nums;
   }
 
@@ -33,7 +49,7 @@
   }
 
   @page {
-    margin: 0mm 0mm 0mm 0mm;
+    /* padding: 5mm 5mm 5mm 5mm; */
     /* size: 57mm 100mm; */
   }
 }
