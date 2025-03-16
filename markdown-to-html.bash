@@ -19,4 +19,4 @@ magick "$target.html.pdf.png" -gravity North \
   -trim +repage -chop 0x1 \
   "$target-trimmed.html.pdf.png"
 
-uv run pa6e "$target-trimmed.html.pdf.png"
+# uv run peripage -p A6p -m "$peri_secondary" -i "$target-trimmed.html.pdf.png"

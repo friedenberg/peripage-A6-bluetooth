@@ -20,6 +20,8 @@
         };
         name = "pa6e-markdown-to-html";
         buildInputs = with pkgs; [
+          uv
+          bluez
           imagemagick
           pandoc
           chromium-html-to-pdf.packages.${system}.html-to-pdf
@@ -45,10 +47,14 @@
 
         devShells.default = pkgs.mkShell {
           packages = (with pkgs; [
+            bluez
+            uv
             imagemagick
             pandoc
             chromium-html-to-pdf.packages.${system}.html-to-pdf
           ]);
+
+          LD_LIBRARY_PATH = [ "${pkgs.bluez.out}/lib" ];
 
           inputsFrom = [];
         };

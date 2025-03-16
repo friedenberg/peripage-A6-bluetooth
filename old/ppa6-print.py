@@ -22,6 +22,7 @@ args = parser.parse_args();
 
 host = args.BTMAC
 printargs=0
+res=384
 
 if (args.imagefile):
     printargs=printargs+1
@@ -114,7 +115,7 @@ def printImage(img):
 
     img = ImageOps.invert(img)
 
-    new_width = 384 #Peripage A6 image width
+    new_width = res #Peripage A6 image width
     scale = new_width / float(img_width)
     new_height = int(img_height * scale)
 
@@ -125,13 +126,14 @@ def printImage(img):
         print ("Target image height is too large. Can't print this (yet)")
         sys.exit(1)
 
-    img = img.resize((384, new_height), Image.LANCZOS)
+    img = img.resize((res, new_height), Image.LANCZOS)
 
     img = img.convert("1")
     # write chunks of 122 bytes to printer
     cmd = bytes.fromhex("10fffe01")
     sock.send(cmd)
     chunksize = 122
+    # chunksize = 200
     sock.send(bytes.fromhex("000000000000000000000000"))
     height_bytes=(new_height).to_bytes(2, byteorder="little")
     cmd = bytes.fromhex("1d7630003000")+height_bytes
@@ -161,7 +163,12 @@ sock.connect((host, 1))
 
 deviceName = getDeviceName()
 print("Device Name", deviceName)
+deviceInfo = getFWDPI()
 print("Device Info", getFWDPI())
+
+if deviceInfo == "V1.15_304dpi":
+    res = 480
+
 print("Serial Number", getSerial())
 
 print("Resetting device")
