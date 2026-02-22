@@ -3,16 +3,16 @@
   render it as a PDF. Chromium is not from nix right now because of Darwin";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
-    nixpkgs-stable.url = "nixpkgs/release-24.11";
-    utils.url = "github:numtide/flake-utils";
+    nixpkgs.url = "github:NixOS/nixpkgs/23d72dabcb3b12469f57b37170fcbc1789bd7457";
+    nixpkgs-master.url = "github:NixOS/nixpkgs/b28c4999ed71543e71552ccfd0d7e68c581ba7e9";
+    utils.url = "https://flakehub.com/f/numtide/flake-utils/0.1.102";
 
     chromium-html-to-pdf = {
       url = "github:friedenberg/chromium-html-to-pdf";
     };
   };
 
-  outputs = { self, nixpkgs, nixpkgs-stable, utils, chromium-html-to-pdf }:
+  outputs = { self, nixpkgs, nixpkgs-master, utils, chromium-html-to-pdf }:
     utils.lib.eachDefaultSystem (system:
       let
         pkgs = import nixpkgs {

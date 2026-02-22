@@ -2,7 +2,9 @@
   description = "Hello world flake using uv2nix";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    utils.url = "https://flakehub.com/f/numtide/flake-utils/0.1.102";
+    nixpkgs-master.url = "github:NixOS/nixpkgs/b28c4999ed71543e71552ccfd0d7e68c581ba7e9";
+    nixpkgs.url = "github:NixOS/nixpkgs/23d72dabcb3b12469f57b37170fcbc1789bd7457";
 
     pyproject-nix = {
       url = "github:pyproject-nix/pyproject.nix";
@@ -29,7 +31,7 @@
       nixpkgs,
       uv2nix,
       pyproject-nix,
-      pyproject-build-systems,
+      pyproject-build-systems, nixpkgs-master, utils,
       ...
     }:
     let
