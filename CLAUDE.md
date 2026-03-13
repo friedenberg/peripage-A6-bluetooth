@@ -8,27 +8,35 @@ pa6e is a toolset for printing to Peripage A6 thermal printers via Bluetooth. It
 
 ## Architecture
 
-- **`markdown-to-html.bash`** — Main pipeline script: markdown -> HTML (pandoc) -> PDF (chromium-html-to-pdf) -> PNG (imagemagick), then trims whitespace
-- **`print_label.bash`** — End-to-end: runs the nix flake to build the label, then sends to printer via `peripage` CLI, optionally prints a QR code
-- **`peri-a6.css`** — Print stylesheet for 57mm thermal paper (Azuro TF font, print media query only)
-- **`label.md`** — Source content for labels (markdown with pipe-delimited lines)
-- **`pp/`** — Python sub-package (uv workspace member) with PyBluez, Pillow, qrcode, tqdm dependencies for direct printer communication
-- **`old/`** — Previous iteration with its own flake and venv
+Two-stage pipeline: nix flake builds the image, then a separate script sends it to the printer.
+
+**Stage 1 — Image generation** (`markdown-to-html.bash`, wrapped as `pa6e-markdown-to-html` by the nix flake):
+1. pandoc: markdown → standalone HTML (embeds `peri-a6.css` which only applies via `@media print`)
+2. html-to-pdf: HTML → PDF (chromium headless, 57mm/2.2409in paper width, zero side margins)
+3. imagemagick: PDF → PNG at 300dpi, then trim whitespace via North-gravity splice+chop trick
+4. Outputs `<input>-trimmed.html.pdf.png`
+
+**Stage 2 — Printing** (`print_label.bash`):
+- Runs `nix run . label.md`, moves output to `old/`, invokes `uv run peripage` from there
+- Optional QR code printing via second `peripage` invocation (pass URL as first arg)
+- Uses `peri_secondary` MAC address; 10s sleep between label and QR prints
+
+**Supporting files:**
+- `peri-a6.css` — Print stylesheet (Azuro TF font, `@media print` only)
+- `label.md` — Source content for labels
+- `pp/` — Python sub-package (uv workspace member) with PyBluez, Pillow, qrcode, tqdm
+- `old/` — Previous iteration; also used as working directory by `print_label.bash`
 
 ## Build & Run
 
 Uses nix flakes + direnv. The dev shell provides: `uv`, `bluez`, `imagemagick`, `pandoc`, `chromium-html-to-pdf`.
 
 ```bash
-# Enter dev environment (automatic with direnv)
-direnv allow
+direnv allow                      # enter dev environment
 
-# Build and run the markdown-to-html pipeline
-nix run . label.md
-
-# Print a label (requires printer BT connection)
-./print_label.bash              # label only
-./print_label.bash "https://..."  # label + QR code
+nix run . label.md                # build image only (stage 1)
+./print_label.bash                # build + print label (stages 1+2)
+./print_label.bash "https://..."  # build + print label + QR code
 ```
 
 ## Justfile Commands
@@ -42,9 +50,9 @@ just release        # version-edit + deploy + push
 
 ## Key Details
 
-- Printer MAC addresses are exported in `.envrc` (`peri_primary`, `peri_secondary`)
+- Printer MAC addresses exported in `.envrc` (`peri_primary`, `peri_secondary`)
 - Secrets managed with `git-secret`; `.env` must be revealed for deployments
-- The nix flake wraps `markdown-to-html.bash` as `pa6e-markdown-to-html` with all dependencies on PATH
-- Paper width is set to 2.2409 inches (57mm) with zero side margins
+- The nix flake wraps `markdown-to-html.bash` via `writeScriptBin` + `symlinkJoin` + `wrapProgram` so all dependencies are on PATH
+- `chromium-html-to-pdf` comes from `github:friedenberg/chromium-html-to-pdf` flake input
 - Printer native X resolution is 384 pixels
-- Python dependencies managed with `uv`; workspace defined in root `pyproject.toml` with member `pp`
+- Python workspace defined in root `pyproject.toml` with members `peripage` and `pp`; PyBluez pinned to a specific git rev
