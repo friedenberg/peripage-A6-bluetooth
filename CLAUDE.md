@@ -17,26 +17,34 @@ Two-stage pipeline: nix flake builds the image, then a separate script sends it 
 4. Outputs `<input>-trimmed.html.pdf.png`
 
 **Stage 2 — Printing** (`print_label.bash`):
-- Runs `nix run . label.md`, moves output to `old/`, invokes `uv run peripage` from there
-- Optional QR code printing via second `peripage` invocation (pass URL as first arg)
-- Uses `peri_secondary` MAC address; 10s sleep between label and QR prints
+- Runs `nix run . label.md`, moves output to `old/`, invokes the Rust `pa6e` binary
+- Uses `peri_secondary` MAC address with concentration level 2
+
+**Rust CLI** (`rs/` — built as `pa6e` by the nix flake):
+- Loads PNG, resizes to printer width (384px A6 / 576px A6+), converts to 1-bit monochrome
+- Connects via Bluetooth RFCOMM (async, bluer/tokio), sends packed row data with 10ms inter-row delay
+- Usage: `pa6e -p A6p -m MAC_ADDRESS -i image.png -c 2` (concentration: 0/1/2)
 
 **Supporting files:**
 - `peri-a6.css` — Print stylesheet (Azuro TF font, `@media print` only)
 - `label.md` — Source content for labels
-- `pp/` — Python sub-package (uv workspace member) with PyBluez, Pillow, qrcode, tqdm
-- `old/` — Previous iteration; also used as working directory by `print_label.bash`
+- `pp/` — Legacy Python sub-package (PyBluez, Pillow, qrcode); superseded by Rust `pa6e` for printing
+- `old/` — Working directory used by `print_label.bash`
 
 ## Build & Run
 
-Uses nix flakes + direnv. The dev shell provides: `uv`, `bluez`, `imagemagick`, `pandoc`, `chromium-html-to-pdf`.
+Uses nix flakes + direnv. The dev shell provides: `uv`, `bluez`, `imagemagick`, `pandoc`, `chromium-html-to-pdf`, `cargo`, `rustc`, `pkg-config`, `dbus`.
 
 ```bash
 direnv allow                      # enter dev environment
 
 nix run . label.md                # build image only (stage 1)
 ./print_label.bash                # build + print label (stages 1+2)
-./print_label.bash "https://..."  # build + print label + QR code
+
+# Rust CLI (rs/)
+cd rs && cargo build              # build pa6e binary
+cd rs && cargo test               # run tests
+nix build .#pa6e                  # build via nix
 ```
 
 ## Justfile Commands
@@ -55,4 +63,6 @@ just release        # version-edit + deploy + push
 - The nix flake wraps `markdown-to-html.bash` via `writeScriptBin` + `symlinkJoin` + `wrapProgram` so all dependencies are on PATH
 - `chromium-html-to-pdf` comes from `github:friedenberg/chromium-html-to-pdf` flake input
 - Printer native X resolution is 384 pixels
-- Python workspace defined in root `pyproject.toml` with members `peripage` and `pp`; PyBluez pinned to a specific git rev
+- Two nix packages: `pa6e-markdown-to-html` (default, stage 1 bash pipeline) and `pa6e` (Rust printer CLI)
+- `rs/` requires `dbus` and `pkg-config` as native build inputs (for bluer/bluez bindings)
+- Python workspace in root `pyproject.toml` with members `peripage` and `pp` is legacy; printing now uses Rust
