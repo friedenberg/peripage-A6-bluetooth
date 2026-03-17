@@ -28,12 +28,11 @@ Two-stage pipeline: nix flake builds the image, then a separate script sends it 
 **Supporting files:**
 - `peri-a6.css` — Print stylesheet (Azuro TF font, `@media print` only)
 - `label.md` — Source content for labels
-- `pp/` — Legacy Python sub-package (PyBluez, Pillow, qrcode); superseded by Rust `pa6e` for printing
 - `old/` — Working directory used by `print_label.bash`
 
 ## Build & Run
 
-Uses nix flakes + direnv. The dev shell provides: `uv`, `bluez`, `imagemagick`, `pandoc`, `chromium-html-to-pdf`, `cargo`, `rustc`, `pkg-config`, `dbus`.
+Uses nix flakes + direnv. The dev shell provides: `bluez`, `imagemagick`, `pandoc`, `chromium-html-to-pdf`, `cargo`, `rustc`, `pkg-config`, `dbus`.
 
 ```bash
 direnv allow                      # enter dev environment
@@ -51,9 +50,6 @@ nix build .#pa6e                  # build via nix
 
 ```bash
 just secret-edit    # Reveal, edit, and re-hide .env secrets (git-secret)
-just deploy         # Build and publish with uv
-just version-edit   # Bump version in pyproject.toml and commit
-just release        # version-edit + deploy + push
 ```
 
 ## Key Details
@@ -65,4 +61,3 @@ just release        # version-edit + deploy + push
 - Printer native X resolution is 384 pixels
 - Two nix packages: `pa6e-markdown-to-html` (default, stage 1 bash pipeline) and `pa6e` (Rust printer CLI)
 - `rs/` requires `dbus` and `pkg-config` as native build inputs (for bluer/bluez bindings)
-- Python workspace in root `pyproject.toml` with members `peripage` and `pp` is legacy; printing now uses Rust

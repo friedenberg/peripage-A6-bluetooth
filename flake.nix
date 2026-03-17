@@ -26,7 +26,6 @@
         };
         name = "pa6e-markdown-to-html";
         buildInputs = with pkgs; [
-          uv
           bluez
           imagemagick
           pandoc
@@ -72,7 +71,6 @@
             with pkgs;
             [
               bluez
-              uv
               imagemagick
               pandoc
               cargo
